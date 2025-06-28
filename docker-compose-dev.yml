@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  web:
+    tty: true
+    build:
+      context: .
+      target: build
+    env_file:
+      - .env
+    volumes:
+      - .:/rails
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development         # 👈 this is the fix
+      DATABASE_URL: postgres://postgres:password@db:5432/myapp_development
+    depends_on:
+      - db
+    command: >
+      bash -c "
+        rm -f tmp/pids/server.pid &&
+        yarn install --silent &&
+        bin/rails db:create db:migrate &&
+        ./bin/dev
+      "
+
+volumes:
+  postgres_data:

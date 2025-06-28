@@ -1,0 +1,5 @@
+web: env RUBY_DEBUG_OPEN=true bin/rails server -b 0.0.0.0
+
+js: npx esbuild app/javascript/application.js --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --watch=forever
+
+css: npx tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch --poll

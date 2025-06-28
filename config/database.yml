@@ -1,0 +1,55 @@
+#default: &default
+#  adapter: postgresql
+#  encoding: unicode
+#  # For details on connection pooling, see Rails configuration guide
+#  # https://guides.rubyonrails.org/configuring.html#database-pooling
+#  pool: <%#= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+#development:
+#  <<: *default
+#  database: foodie_development
+
+#test:
+#  <<: *default
+#  database: foodie_test
+#
+#   production:
+#     url: <%= ENV["MY_APP_DATABASE_URL"] %>
+#
+# Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
+# for a full overview on how database connection configuration can be specified.
+#
+#production:
+#  <<: *default
+#  database: foodie_production
+#  username: foodie
+#  password: <%#= ENV["FOODIE_DATABASE_PASSWORD"] %>
+
+
+
+#######################
+##  Default Configs  ##
+#######################
+default: &default
+  adapter:  <%= ENV['POSTGRES_ADAPTER']  || "sqlite3" %>
+  host:     <%= ENV['POSTGRES_HOST']     || "" %>
+  username: <%= ENV['POSTGRES_USERNAME'] || "" %>
+  password: <%= ENV['POSTGRES_PASSWORD'] || "" %>
+  socket:   <%= ENV['POSTGRES_SOCKET']   || "" %>
+  pool:     500
+  timeout:  5000
+
+###########################
+##  Environment Configs  ##
+###########################
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+production: &mysql_environment
+  <<: *default
+  database: <%= ENV['MYSQL_DATABASE'] || "db/production.sqlite3" %>
+
+test: &test
+  <<: *default
+  database: <%= ENV['MYSQL_TEST_DATABASE'] || "db/test.sqlite3" %>

@@ -1,0 +1,11 @@
+- if flash.any?
+  .container.mx-auto.px-4.mt-4
+    - flash.each do |type, message|
+      - if type.to_sym == :alert
+        - alert_class = "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
+      - elsif type.to_sym == :notice
+        - alert_class = "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded"
+      - else
+        - alert_class = "bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded"
+      div class=alert_class
+        = message

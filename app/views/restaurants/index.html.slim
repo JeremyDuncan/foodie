@@ -1,0 +1,22 @@
+/ app/views/restaurants/index.html.slim
+
+- content_for :title, "Restaurants"
+
+section.mt-8.container.mx-auto.px-4
+  h1.text-3xl.font-bold.text-gray-900.mb-6 Restaurants
+
+  div.grid.grid-cols-1.sm:grid-cols-2.lg:grid-cols-3.gap-6
+    - @restaurants.each do |restaurant|
+      div.bg-white.rounded-lg.shadow.p-4.flex.flex-col.justify-between
+        = render restaurant
+        div.mt-4
+          = link_to restaurant_path(restaurant),
+                  class: "inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium" do
+            span Show
+            i.fas.fa-arrow-right.ml-2
+
+  div.mt-8.text-center
+    = link_to new_restaurant_path,
+            class: "inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded" do
+      i.fas.fa-plus.mr-2
+      span New Restaurant

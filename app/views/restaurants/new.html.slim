@@ -1,0 +1,14 @@
+/ app/views/restaurants/new.html.slim
+
+- content_for :title, "New restaurant"
+
+section.container.mx-auto.px-4.mt-8
+  h1.text-3xl.font-bold.text-gray-900.mb-6 New restaurant
+
+  = render "form", restaurant: @restaurant
+
+  div.mt-6.text-center
+    = link_to restaurants_path,
+            class: "inline-block text-indigo-600 hover:text-indigo-800 font-medium" do
+      i.fas.fa-arrow-left.mr-2
+      span Back to restaurants

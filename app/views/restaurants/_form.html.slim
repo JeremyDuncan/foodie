@@ -1,0 +1,29 @@
+/ app/views/restaurants/_form.html.slim
+
+= form_with(model: restaurant, local: true, html: { class: "space-y-6" }) do |f|
+  - if restaurant.errors.any?
+    div.bg-red-100.border.border-red-400.text-red-700.p-4.rounded
+      h2.font-semibold
+        = pluralize(restaurant.errors.count, "error")
+        |  prohibited this restaurant from being saved:
+      ul.list-disc.list-inside.mt-2
+        - restaurant.errors.full_messages.each do |msg|
+          li= msg
+
+  .grid.grid-cols-1.gap-6
+    .space-y-1
+      = f.label :name, class: "block text-sm font-medium text-gray-700"
+      = f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+
+    .space-y-1
+      = f.label :address, class: "block text-sm font-medium text-gray-700"
+      = f.text_field :address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+
+    .space-y-1
+      = f.label :phone, class: "block text-sm font-medium text-gray-700"
+      = f.telephone_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+
+  .pt-4
+    = f.submit class: "w-full inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" do
+      i.fas.fa-save.mr-2
+      span Save

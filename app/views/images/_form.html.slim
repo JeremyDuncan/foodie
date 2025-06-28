@@ -1,0 +1,12 @@
+/ app/views/images/_form.html.slim
+
+= form_with(model: [@restaurant, @image], local: true, html: { multipart: true, class: "space-y-6" }) do |f|
+  - if @image.errors.any?
+    /* error display code */
+
+  .space-y-1
+    = f.label :file, "Upload file", class: "block text-sm font-medium"
+    = f.file_field :file, accept: "image/*", class: "…tailwind classes…"
+
+  .pt-4
+    = f.submit "Upload Image", class: "…tailwind submit button…"
