@@ -1,12 +1,12 @@
 / app/views/restaurants/index.html.slim
-
 - content_for :title, "Restaurants"
+- restaurants = @restaurants || {}
 
 section.mt-8.container.mx-auto.px-4
   h1.text-3xl.font-bold.text-gray-900.mb-6 Restaurants
 
   div.grid.grid-cols-1.sm:grid-cols-2.lg:grid-cols-3.gap-6
-    - @restaurants.each do |restaurant|
+    - restaurants.each do |restaurant|
       div.bg-white.rounded-lg.shadow.p-4.flex.flex-col.justify-between
         = render restaurant
         div.mt-4

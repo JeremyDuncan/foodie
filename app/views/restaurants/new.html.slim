@@ -1,11 +1,11 @@
 / app/views/restaurants/new.html.slim
-
 - content_for :title, "New restaurant"
+- restaurant = @restaurant || {}
 
 section.container.mx-auto.px-4.mt-8
   h1.text-3xl.font-bold.text-gray-900.mb-6 New restaurant
 
-  = render "form", restaurant: @restaurant
+  = render "form", restaurant: restaurant
 
   div.mt-6.text-center
     = link_to restaurants_path,
