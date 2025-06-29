@@ -1,9 +1,15 @@
 class ImagesController < ApplicationController
   before_action :set_image, only: %i[ show edit update destroy ]
+  before_action :set_restaurant
 
   # GET /images or /images.json
+  # def index
+  #   @images = Image.all
+  # end
+
   def index
-    @images = Image.all
+    @restaurant = Restaurant.find(params[:restaurant_id])
+    @images = @restaurant.images
   end
 
   # GET /images/1 or /images/1.json
@@ -18,21 +24,6 @@ class ImagesController < ApplicationController
   # GET /images/1/edit
   def edit
   end
-
-  # POST /images or /images.json
-  # def create
-  #   @image = Image.new(image_params)
-  #
-  #   respond_to do |format|
-  #     if @image.save
-  #       format.html { redirect_to @image, notice: "Image was successfully created." }
-  #       format.json { render :show, status: :created, location: @image }
-  #     else
-  #       format.html { render :new, status: :unprocessable_entity }
-  #       format.json { render json: @image.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
 
   def new
     @restaurant = Restaurant.find(params[:restaurant_id])
@@ -65,17 +56,18 @@ class ImagesController < ApplicationController
     end
   end
 
-  # DELETE /images/1 or /images/1.json
   def destroy
-    @image.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to images_path, status: :see_other, notice: "Image was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    image = @restaurant.images.find(params[:id])
+    image.purge
+    redirect_to @restaurant, notice: "Image removed"
   end
 
+
   private
+    def set_restaurant
+      @restaurant = Restaurant.find(params[:restaurant_id])
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_image
       @image = Image.find(params[:id])

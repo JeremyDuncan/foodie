@@ -1,0 +1,12 @@
+- content_for :title, "Editing restaurant"
+- restaurant = @restaurant || {}
+
+h1 Editing restaurant
+
+= render "form", restaurant: restaurant
+
+br
+.div
+  = link_to "Show this restaurant", restaurant
+  br
+  = link_to "Back to restaurants", restaurants_path

@@ -1,19 +1,15 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :images
   resources :reviews
   resources :menu_items
-  # resources :restaurants
   resources :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-
 
   resources :restaurants do
-    resources :images, only: [:new, :create]
+    resources :images, only: [:index, :new, :create]
   end
-  # resources :images, except: [:new, :create]
 
+  # Allow edit/update/destroy without nesting:
+  resources :images, only: [:show, :edit, :update, :destroy]
 
   # root "home#index"
   root "home#root"
