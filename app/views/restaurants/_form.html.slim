@@ -1,15 +1,15 @@
-/ app/views/restaurants/_form.html.slim
-
-= form_with(model: restaurant, local: true, html: { class: "space-y-6" }) do |f|
+= form_with model: restaurant, local: true, multipart: true, class: "space-y-6" do |f|
   - if restaurant.errors.any?
     div.bg-red-100.border.border-red-400.text-red-700.p-4.rounded
-      h2.font-semibold
-        = pluralize(restaurant.errors.count, "error")
-        |  prohibited this restaurant from being saved:
+      h2.font-semibold= pluralize(restaurant.errors.count, "error") + " prohibited this restaurant from being saved:"
       ul.list-disc.list-inside.mt-2
         - restaurant.errors.full_messages.each do |msg|
           li= msg
 
+
+  / #######################-----------------------------------------------------
+  / ## RESTAURANT FIELDS ##
+  / #######################
   .grid.grid-cols-1.gap-6
     .space-y-1
       = f.label :name, class: "block text-sm font-medium text-gray-700"
@@ -23,7 +23,42 @@
       = f.label :phone, class: "block text-sm font-medium text-gray-700"
       = f.telephone_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 
+    br
+    hr
+    h3.text-lg.font-medium Images
+    / #######################---------------------------------------------------
+    / ## NEW IMAGE UPLOADS ##
+    / #######################
+    = f.label :new_images, 'Upload New Images:', class: 'form-label'
+    = file_field_tag 'restaurant[new_images][]',
+            type: :file,
+            multiple: true,
+            accept: 'image/*',
+            class: 'form-input'
+
+    h3.text-lg.font-medium Existing Images
+
+    / ###################################---------------------------------------
+    / ## EDIT / REMOVE EXISTING IMAGES ##
+    / ###################################
+    #images
+      = f.fields_for :images do |img|
+        .flex.items-center.space-x-4.mb-4
+          = img.hidden_field :id
+          = img.file_field :file,
+                  accept: "image/*",
+                  class: "block"
+          - if img.object.file.attached?
+            = image_tag img.object.file.variant(resize_to_limit: [100, 100]), class: "rounded shadow"
+
+          .flex.items-center.space-x-2
+            = img.check_box :_destroy
+            = img.label :_destroy, "Remove", class: "text-red-500"
+
   .pt-4
-    = f.submit class: "w-full inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" do
-      i.fas.fa-save.mr-2
-      span Save
+    = f.submit "Save", class: "w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+  .pt-2
+    = link_to restaurants_path, class:  "w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700" do
+      i.fa-solid.fa-rectangle-xmark
+      |>
+      | Cancel
