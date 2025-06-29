@@ -11,6 +11,10 @@ div.bg-white.rounded-lg.shadow.p-4.space-y-4 id=dom_id(restaurant)
     strong.text-gray-700 Phone:
     |  #{restaurant.phone}
 
+  - print(restaurant, "restaurant")
+  - print(params, "params")
+  - print(restaurant.images, "restaurant Images")
+
   - if restaurant.images.present?
     - restaurant.images.each do |img|
       - if img.file.attached?
