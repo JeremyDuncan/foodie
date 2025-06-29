@@ -1,4 +1,4 @@
-div.bg-white.rounded-lg.shadow.p-4.space-y-2[id=dom_id(restaurant)]
+div.bg-white.rounded-lg.shadow.p-4.space-y-4 id=dom_id(restaurant)
   p
     strong.text-gray-700 Name:
     |  #{restaurant.name}
@@ -10,3 +10,12 @@ div.bg-white.rounded-lg.shadow.p-4.space-y-2[id=dom_id(restaurant)]
   p
     strong.text-gray-700 Phone:
     |  #{restaurant.phone}
+
+  - if restaurant.images.present?
+    - restaurant.images.each do |img|
+      - if img.file.attached?
+        = image_tag img.file.variant(resize_to_limit: [300, 200])
+      - else
+        p.text-gray-500.mt-4 No image attached.
+  - else
+    p.text-gray-500.mt-4 No images added yet.
