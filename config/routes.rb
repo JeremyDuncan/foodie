@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   resources :users
 
   resources :restaurants do
-    resources :images, only: [:index, :new, :create]
+    resources :images, only: [:edit, :update, :index, :new, :create, :destroy]
   end
 
   # Allow edit/update/destroy without nesting:

@@ -1,4 +1,6 @@
 class Image < ApplicationRecord
+  enum :category, { restaurant: 0, food: 1, menu: 2 }
+
   belongs_to :imageable, polymorphic: true, inverse_of: :images
   belongs_to :user
 
@@ -6,9 +8,9 @@ class Image < ApplicationRecord
 
   before_validation :assign_current_user
 
-
   private
-    def assign_current_user
-      self.user ||= Current.user
-    end
+
+  def assign_current_user
+    self.user ||= Current.user
+  end
 end

@@ -1,64 +1,88 @@
-= form_with model: restaurant, local: true, multipart: true, class: "space-y-6" do |f|
+= form_with model: restaurant, local: true, multipart: true, class: "space-y-8" do |f|
   - if restaurant.errors.any?
-    div.bg-red-100.border.border-red-400.text-red-700.p-4.rounded
-      h2.font-semibold= pluralize(restaurant.errors.count, "error") + " prohibited this restaurant from being saved:"
+    .bg-red-50.border.border-red-200.p-4.rounded
+      h2.text-red-700.font-semibold= "#{pluralize(restaurant.errors.count, 'error')} prohibited saving:"
       ul.list-disc.list-inside.mt-2
         - restaurant.errors.full_messages.each do |msg|
-          li= msg
+          li.text-red-600= msg
 
-
-  / #######################-----------------------------------------------------
-  / ## RESTAURANT FIELDS ##
-  / #######################
-  .grid.grid-cols-1.gap-6
+  //  Restaurant Details ───────────────────────────────────────────────────────
+  .grid.grid-cols-1.sm:grid-cols-2.gap-6
     .space-y-1
       = f.label :name, class: "block text-sm font-medium text-gray-700"
-      = f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      = f.text_field :name, class: "mt-1 block w-full rounded border-gray-300 focus:ring-indigo-500"
 
     .space-y-1
       = f.label :address, class: "block text-sm font-medium text-gray-700"
-      = f.text_field :address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      = f.text_field :address, class: "mt-1 block w-full rounded border-gray-300 focus:ring-indigo-500"
 
     .space-y-1
       = f.label :phone, class: "block text-sm font-medium text-gray-700"
-      = f.telephone_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      = f.telephone_field :phone, class: "mt-1 block w-full rounded border-gray-300 focus:ring-indigo-500"
 
-    br
-    hr
-    h3.text-lg.font-medium Images
-    / #######################---------------------------------------------------
-    / ## NEW IMAGE UPLOADS ##
-    / #######################
-    = f.label :new_images, 'Upload New Images:', class: 'form-label'
-    = file_field_tag 'restaurant[new_images][]',
-            type: :file,
-            multiple: true,
-            accept: 'image/*',
-            class: 'form-input'
+  hr.border-gray-200
 
-    h3.text-lg.font-medium Existing Images
+  // Images ────────────────────────────────────────────────────────────────────
+  .grid.grid-cols-1.lg:grid-cols-2.gap-8
+    // • Restaurant Images
+    .space-y-4
+      h3.text-lg.font-medium Restaurant Images
+      = f.label :new_restaurant_images, 'Upload New:', class: "block text-sm font-medium text-gray-700"
+      = file_field_tag 'restaurant[new_restaurant_images][]', multiple: true, accept: 'image/*', class: "block w-full text-sm text-gray-600"
 
-    / ###################################---------------------------------------
-    / ## EDIT / REMOVE EXISTING IMAGES ##
-    / ###################################
-    #images
-      = f.fields_for :images do |img|
-        .flex.items-center.space-x-4.mb-4
-          = img.hidden_field :id
-          = img.file_field :file,
-                  accept: "image/*",
-                  class: "block"
-          - if img.object.file.attached?
-            = image_tag img.object.file.variant(resize_to_limit: [100, 100]), class: "rounded shadow"
+    // ────── Restaurant Images Preview ──────
+    - if restaurant.restaurant_images.any?
+      .grid.grid-cols-3.gap-4
+        - restaurant.restaurant_images.each do |img|
+          .relative.border.rounded.overflow-hidden
+            / “click to zoom” opens a larger photo in new tab
+            = link_to url_for(img.file.variant(resize_to_limit: [800, 600])),
+                    target: "_blank" do
+              = image_tag img.file.variant(resize_to_limit: [200, 200]),
+                      class: "w-full h-32 object-cover cursor-zoom-in"
 
-          .flex.items-center.space-x-2
-            = img.check_box :_destroy
-            = img.label :_destroy, "Remove", class: "text-red-500"
+            .absolute.top-1.right-1.flex.space-x-1
+              = link_to edit_restaurant_image_path(restaurant, img),
+                      class: "bg-white p-1 rounded-full hover:bg-gray-100" do
+                i.fa-solid.fa-pen.text-gray-700
 
-  .pt-4
-    = f.submit "Save", class: "w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-  .pt-2
-    = link_to restaurants_path, class:  "w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700" do
-      i.fa-solid.fa-rectangle-xmark
-      |>
-      | Cancel
+              = link_to restaurant_image_path(restaurant, img),
+                      data: {turbo_method: :delete, turbo_confirm: "Delete this image?"}, class: "bg-white p-1 rounded-full hover:bg-gray-100" do
+                    i.fa-solid.fa-trash.text-red-600
+
+            / metadata below each thumb
+            .p-2.text-xs.text-gray-600
+              p Uploaded: #{img.created_at.to_date}
+              p By:       #{img.user.name}
+              p Title:    #{img.title.presence || '—'}
+              p Desc:     #{truncate(img.description, length: 30)}
+
+    // ────── Menu Layout Images Preview ──────
+    - if restaurant.menu_images.any?
+      .grid.grid-cols-3.gap-4
+        - restaurant.menu_images.each do |img|
+          .relative.border.rounded.overflow-hidden
+            = link_to url_for(img.file.variant(resize_to_limit: [800, 600])),
+                    target: "_blank" do
+              = image_tag img.file.variant(resize_to_limit: [200, 200]),
+                      class: "w-full h-32 object-cover cursor-zoom-in"
+
+            .absolute.top-1.right-1.flex.space-x-1
+              = link_to edit_restaurant_image_path(restaurant, img),
+                      class: "bg-white p-1 rounded-full hover:bg-gray-100" do
+                i.fa-solid.fa-pen.text-gray-700
+
+              = link_to restaurant_image_path(restaurant, img),
+                      data: { turbo_method: :delete, turbo_confirm: "Delete this image?" }, class: "bg-white p-1 rounded-full hover:bg-gray-100" do
+                i.fa-solid.fa-trash.text-red-600
+
+            .p-2.text-xs.text-gray-600
+              p Uploaded: #{img.created_at.to_date}
+              p By:       #{img.user.name}
+              p Title:    #{img.title.presence || '—'}
+              p Desc:     #{truncate(img.description, length: 30)}
+
+
+  .flex.justify-end.space-x-4
+    = link_to 'Cancel', restaurants_path, class: "px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+    = f.submit 'Save Restaurant', class: "px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"

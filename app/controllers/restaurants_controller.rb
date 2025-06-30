@@ -40,18 +40,12 @@ class RestaurantsController < ApplicationController
   end
 
   def update
-    # pull out new_images and remove from params hash
-    rp      = restaurant_params
-    uploads = rp.delete(:new_images)
-
-    if @restaurant.update(rp)
-      Array(uploads).each do |upload|
-        @restaurant.images.create(file: upload)
-      end
-
-      redirect_to @restaurant, notice: "Restaurant was successfully updated."
+    # strip out the new_images arrays so AR only tries to update core attrs
+    if @restaurant.update(restaurant_params.except(:new_restaurant_images, :new_menu_images))
+      attach_new_images
+      redirect_to @restaurant, notice: 'Restaurant updated successfully.'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit
     end
   end
 
@@ -63,22 +57,35 @@ class RestaurantsController < ApplicationController
                 notice:   "Restaurant was successfully destroyed."
   end
 
-
-
   private
   def set_restaurant
     @restaurant = Restaurant.find(params[:id])
   end
 
+
   def restaurant_params
-    params.require(:restaurant)
-          .permit(
-            :name,
-            :address,
-            :phone,
-            new_images: [],
-            images_attributes: [:id, :file, :_destroy]
-          )
+    params.require(:restaurant).permit(
+      :name,
+      :address,
+      :phone,
+      images_attributes: [:id, :file, :_destroy],
+      new_restaurant_images: [],
+      new_menu_images: []
+    )
   end
+
+  # ============================================================================
+  # Create Image records from uploaded files for each category
+  # ----------------------------------------------------------------------------
+  def attach_new_images
+    Array(params[:restaurant][:new_restaurant_images]).each do |file|
+      @restaurant.restaurant_images.create(file: file)
+    end
+
+    Array(params[:restaurant][:new_menu_images]).each do |file|
+      @restaurant.menu_images.create(file: file)
+    end
+  end
+
 end
 

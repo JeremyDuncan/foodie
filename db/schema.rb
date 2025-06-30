@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_28_144516) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_30_001343) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_144516) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "hearts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "menu_item_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_item_id"], name: "index_hearts_on_menu_item_id"
+    t.index ["user_id", "menu_item_id"], name: "index_hearts_on_user_id_and_menu_item_id", unique: true
+    t.index ["user_id"], name: "index_hearts_on_user_id"
+  end
+
   create_table "images", force: :cascade do |t|
     t.string "file"
     t.bigint "user_id", null: false
@@ -46,6 +56,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_144516) do
     t.bigint "imageable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "description"
+    t.integer "category", default: 0, null: false
+    t.index ["category"], name: "index_images_on_category"
     t.index ["imageable_type", "imageable_id"], name: "index_images_on_imageable"
     t.index ["user_id"], name: "index_images_on_user_id"
   end
@@ -72,10 +86,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_144516) do
     t.integer "rating"
     t.text "body"
     t.bigint "user_id", null: false
-    t.bigint "restaurant_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["restaurant_id"], name: "index_reviews_on_restaurant_id"
+    t.string "reviewable_type", null: false
+    t.bigint "reviewable_id", null: false
+    t.index ["reviewable_type", "reviewable_id"], name: "index_reviews_on_reviewable_type_and_reviewable_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
@@ -94,8 +109,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_144516) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "hearts", "menu_items"
+  add_foreign_key "hearts", "users"
   add_foreign_key "images", "users"
   add_foreign_key "menu_items", "restaurants"
-  add_foreign_key "reviews", "restaurants"
   add_foreign_key "reviews", "users"
 end
